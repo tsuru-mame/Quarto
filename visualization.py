@@ -58,7 +58,6 @@ class Visualization:
                     new_block_mesh = mesh.Mesh.from_file(block_path)
                     new_block_mesh.rotate([0.0, 1.0, 0.0], np.radians(180))
                     # self.mesh_scale(new_block_mesh, 0.1, 0.1, 0.1)
-                    # new_block_mesh.translate(np.array([i*20,j*20,0]))
                     new_block_mesh.translate(np.array([i*20-block_center[0], j*20-block_center[1],0]))
                     # volume, cog, inertia = new_block_mesh.get_mass_properties()
                     # print(cog)
