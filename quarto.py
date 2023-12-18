@@ -12,11 +12,11 @@ class Quarto:
             self.blocks[i] = np.array(v)
         print(self.blocks)
 
-        self.block_attr = [
-            {True: 'lack', False: 'white'},     # 'color'
-            {True: 'high', False: 'low'},       # 'height'
-            {True: 'hole', False: 'no-hole'},   # 'hole'
-            {True: 'circle', False: 'square'}   # 'shape'
+        block_attr = [
+            {True: 'black', False: 'white'},    # 'color'
+            {True: 'big', False: 'small'},      # 'height'
+            {True: 'cube', False: 'round'},     # 'shape'
+            {True: 'hole', False: 'nohole'}     # 'hole'
             ]
 
     def get_board(self):
@@ -35,7 +35,7 @@ class Quarto:
         for block in line:
             f_list += self.blocks[block]
             t_list *= self.blocks[block]
-        if False in f_list | True in t_list:
+        if False in f_list or True in t_list:
             return True
         else:
             return False
@@ -70,6 +70,7 @@ def main():
         ]
     for move in moves:
         quarto.set_board(move[0], move[1], move[2])
+        print(quarto.get_board())
         if quarto.check():
             break
         
