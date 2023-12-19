@@ -50,6 +50,11 @@ class Quarto:
                 if self.check_line(self.board[:,i]):
                     print(f"col:{i}")
                     return True
+        if ~np.isnan(np.diag(self.board)).any():
+            if self.check_line(np.diag(self.board)):
+                print(f"diag:{i}")
+                return True
+
         return False
 
 def main():
