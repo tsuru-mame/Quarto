@@ -7,23 +7,24 @@ from matplotlib import pyplot
 class Visualization:
     def __init__(self) -> None:
         self.board = np.array([[np.nan]*4]*4)
+        self.board_path = 'stl/quarto_board.stl'
         self.block_paths = {
-            0 : 'blocks/big_cube_hole.stl',
-            1 : 'blocks/big_cube_nohole.stl',
-            2 : 'blocks/big_round_hole.stl',
-            3 : 'blocks/big_round_nohole.stl',
-            4 : 'blocks/small_cube_hole.stl',
-            5 : 'blocks/small_cube_nohole.stl',
-            6 : 'blocks/small_round_hole.stl',
-            7 : 'blocks/small_round_nohole.stl',
-            8 : 'blocks/big_cube_hole.stl',
-            9 : 'blocks/big_cube_nohole.stl',
-            10: 'blocks/big_round_hole.stl',
-            11: 'blocks/big_round_nohole.stl',
-            12: 'blocks/small_cube_hole.stl',
-            13: 'blocks/small_cube_nohole.stl',
-            14: 'blocks/small_round_hole.stl',
-            15: 'blocks/small_round_nohole.stl'
+            0 : 'stl/big_cube_hole.stl',
+            1 : 'stl/big_cube_nohole.stl',
+            2 : 'stl/big_round_hole.stl',
+            3 : 'stl/big_round_nohole.stl',
+            4 : 'stl/small_cube_hole.stl',
+            5 : 'stl/small_cube_nohole.stl',
+            6 : 'stl/small_round_hole.stl',
+            7 : 'stl/small_round_nohole.stl',
+            8 : 'stl/big_cube_hole.stl',
+            9 : 'stl/big_cube_nohole.stl',
+            10: 'stl/big_round_hole.stl',
+            11: 'stl/big_round_nohole.stl',
+            12: 'stl/small_cube_hole.stl',
+            13: 'stl/small_cube_nohole.stl',
+            14: 'stl/small_round_hole.stl',
+            15: 'stl/small_round_nohole.stl'
             }
         
         self.block_centers = {
@@ -44,12 +45,36 @@ class Visualization:
             14: [27.41838273, -60.02330608],
             15: [47.95682291, -59.69336399]
             }
+        
+        self.block_colors = {
+            0 : 'saddlebrown',
+            1 : 'saddlebrown',
+            2 : 'saddlebrown',
+            3 : 'saddlebrown',
+            4 : 'saddlebrown',
+            5 : 'saddlebrown',
+            6 : 'saddlebrown',
+            7 : 'saddlebrown',
+            8 : 'navajowhite',
+            9 : 'navajowhite',
+            10: 'navajowhite',
+            11: 'navajowhite',
+            12: 'navajowhite',
+            13: 'navajowhite',
+            14: 'navajowhite',
+            15: 'navajowhite'
+            }
 
     def visualization(self, blocks):
         figure = pyplot.figure()
-        axes = figure.add_subplot(projection='3d')
+        axes = figure.add_subplot(projection='3d', computed_zorder=False)
 
-        block_mesh = mesh.Mesh(np.array([], dtype=mesh.Mesh.dtype))
+        board_mesh = mesh.Mesh.from_file(self.board_path)
+        board_mesh.translate(np.array([30, 30, -25]))
+        collection = mplot3d.art3d.Poly3DCollection(board_mesh.vectors, color="black", alpha=0.5)
+        axes.add_collection3d(collection)
+        scale = board_mesh.points.flatten()
+        axes.auto_scale_xyz(scale, scale, scale)
         for i in range(blocks.shape[0]):
             for j in range(blocks.shape[1]):
                 if ~np.isnan(blocks[i,j]):
@@ -57,18 +82,13 @@ class Visualization:
                     block_center = self.block_centers[blocks[i,j]]
                     new_block_mesh = mesh.Mesh.from_file(block_path)
                     new_block_mesh.rotate([0.0, 1.0, 0.0], np.radians(180))
-                    # self.mesh_scale(new_block_mesh, 0.1, 0.1, 0.1)
                     new_block_mesh.translate(np.array([i*20-block_center[0], j*20-block_center[1],0]))
-                    # volume, cog, inertia = new_block_mesh.get_mass_properties()
-                    # print(cog)
-                    block_mesh = mesh.Mesh(np.concatenate([
-                        block_mesh.data.copy(),
-                        new_block_mesh.data.copy(),
-                        ]))
-        block_mesh = self.mesh_update(block_mesh)
-        axes.add_collection3d(mplot3d.art3d.Poly3DCollection(block_mesh.vectors))
+                    new_block_mesh = self.mesh_update(new_block_mesh)
+                    block_color = self.block_colors[blocks[i,j]]
+                    collection = mplot3d.art3d.Poly3DCollection(new_block_mesh.vectors, color=block_color, alpha=0.5)
+                    axes.add_collection3d(collection)
 
-        scale = block_mesh.points.flatten()
+        scale = new_block_mesh.points.flatten()
         axes.auto_scale_xyz(scale, scale, scale)
 
         pyplot.show()
@@ -99,14 +119,14 @@ class Visualization:
 
 def main():
     vis = Visualization()
-    # blocks = [[14, 3, 7, np.nan],
-    #           [13, 6, 10, 2],
-    #           [15, np.nan, np.nan, 11],
-    #           [12, np.nan, 0, 9]]
+    # blocks = [[np.nan,np.nan,np.nan,np.nan],
+    #           [np.nan,np.nan,np.nan,np.nan],
+    #           [np.nan,np.nan,np.nan,np.nan],
+    #           [np.nan,np.nan,np.nan,np.nan]]
     blocks = [[0,1,2,3],
               [4,5,6,7],
-              [np.nan,np.nan,np.nan,np.nan],
-              [np.nan,np.nan,np.nan,np.nan]]
+              [8,9,10,11],
+              [12,13,14,15]]
     vis.visualization(np.array(blocks))
 
 
