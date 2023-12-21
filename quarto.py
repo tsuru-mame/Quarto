@@ -4,13 +4,15 @@ import matplotlib.pyplot as plt
 import itertools
 
 
-class Quarto:
+class Quarto():
     def __init__(self) -> None:
         self.board = np.array([[np.nan]*4]*4)
         self.blocks = {}
         for i, v in enumerate(itertools.product([True, False], repeat=4)):
             self.blocks[i] = np.array(v)
-        print(self.blocks)
+        # print(self.blocks)
+        self.remaining_blocks = [x for x in range(16)]
+        self.next_block = None
 
         block_attr = [
             {True: 'black', False: 'white'},    # 'color'
@@ -22,9 +24,12 @@ class Quarto:
     def get_board(self):
         return self.board
     
-    def set_board(self, i, j, block):
+    def set_board(self, square, block):
+        i = square[0]
+        j = square[1]
         if np.isnan(self.board[i, j]):
             self.board[i, j] = block
+            self.remaining_blocks.remove(block)
             return True
         else:
             return False
@@ -40,19 +45,23 @@ class Quarto:
         else:
             return False
 
-    def check(self):
+    def is_game_end(self):
         for i in range(4):
             if ~np.isnan(self.board[i,:]).any():
                 if self.check_line(self.board[i,:]):
-                    print(f"row:{i}")
+                    # print(f"row:{i}")
                     return True
             if ~np.isnan(self.board[:,i]).any():
                 if self.check_line(self.board[:,i]):
-                    print(f"col:{i}")
+                    # print(f"col:{i}")
                     return True
         if ~np.isnan(np.diag(self.board)).any():
             if self.check_line(np.diag(self.board)):
-                print(f"diag:{i}")
+                # print(f"diag:{i}")
+                return True
+        if ~np.isnan(np.diag(np.fliplr(self.board))).any():
+            if self.check_line(np.diag(np.fliplr(self.board))):
+                # print(f"diag:{i}")
                 return True
 
         return False
@@ -74,12 +83,12 @@ def main():
         [3,0,12],
         ]
     for move in moves:
-        quarto.set_board(move[0], move[1], move[2])
+        quarto.set_board([move[0], move[1]], move[2])
         print(quarto.get_board())
-        if quarto.check():
+        if quarto.is_game_end():
             break
         
 
 
 if __name__ == "__main__": 
-    main() 
+    main()

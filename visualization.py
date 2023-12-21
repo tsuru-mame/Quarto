@@ -4,7 +4,7 @@ from mpl_toolkits import mplot3d
 from matplotlib import pyplot
 
 
-class Visualization:
+class Visualization():
     def __init__(self) -> None:
         self.board = np.array([[np.nan]*4]*4)
         self.board_path = 'stl/quarto_board.stl'
