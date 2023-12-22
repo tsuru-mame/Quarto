@@ -42,7 +42,7 @@ class Play():
         quarto.__init__()
 
 
-    def train(self):
+    def compete(self):
         try:
             while True:
                 self.game()
@@ -54,4 +54,4 @@ class Play():
 
 if __name__ == "__main__": 
     play = Play()
-    play.train()
+    play.compete()
